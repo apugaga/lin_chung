@@ -1,0 +1,28 @@
+import tensorflow as tf
+
+print(tf.__version__)
+print("GPU available:", tf.config.list_physical_devices('GPU'))
+
+import time 
+
+def time_matmul(x):
+    start = time.time()
+    for loop in range(10):
+        tf.matmul(x,x)
+
+    result = time.time() - start
+    print("{:0.2f}ms".format(1000*result))
+    
+
+print("on cpu:",end='')
+with tf.device("CPU:0"):
+    x = tf.random.uniform([1000,1000])
+    assert x.device.endswith("CPU:0")
+    time_matmul(x)
+
+if tf.config.list_physical_devices("GPU"):
+    print("on gpu:",end='')
+    with tf.device("GPU:0"):
+        x = tf.random.uniform([1000,1000])
+        assert x.device.endswith("GPU:0")
+        time_matmul(x)
